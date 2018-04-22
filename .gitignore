@@ -1,0 +1,12 @@
+*.iml
+.idea/*
+.vscode/
+*.pyc
+.tmp/*
+config/production.py
+db/*.db
+.sass-cache
+Include/
+Lib/
+Scripts/
+__pycache__

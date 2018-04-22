@@ -1,0 +1,113 @@
+{% extends 'layout/layout.html' %}
+{% from 'macro/main.html' import get_flash_message_html, render_field %}
+
+{% block editor_script %}
+<style type="text/css">
+.simditor.simditor-html .simditor-wrapper > textarea {
+  display: block !important;
+}
+.simditor.simditor-html .simditor-body,
+.simditor.simditor-html .simditor-placeholder {
+  display: none;
+}
+</style>
+<script src="{{ url_for('static', filename='simditor/scripts/module.js') }}"></script>
+<script src="{{ url_for('static', filename='simditor/scripts/hotkeys.js') }}"></script>
+<script src="{{ url_for('static', filename='simditor/scripts/uploader.js') }}"></script>
+<script src="{{ url_for('static', filename='simditor/scripts/simditor.js') }}"></script>
+<script src="{{ url_for('static', filename='simditor/scripts/beautify-html.js') }}"></script>
+<script src="{{ url_for('static', filename='simditor/scripts/simditor-html.js') }}"></script>
+{% endblock %}
+
+{% block body %}
+
+{% include 'inc/header.html' %}
+
+<div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <br>
+    <div class="row">
+        {% for category, message in messages %}
+        <div class="col s12 valign-wrapper white-text">
+            {{ get_flash_message_html(category, message) }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+    <h3 class="green-text">Write one</h3>
+    <form action="{% if not note %}{{ url_for('note.write') }}{% else %}{{ url_for('note.edit', id=note.id) }}{% endif %}" method="post">
+
+        <div class="row">
+            <div class="input-field col s12">
+                {{ render_field(form.title) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col s12">
+                {{ render_field(form.content) }}
+            </div>
+            <script>
+                var toolbar = [
+                    'title', 'bold', 'italic', 'underline',
+                    'strikethrough', 'fontScale', 'color', '|',
+                    'ol', 'ul', 'blockquote', 'code', 'table', '|',
+                    'link', 'image', 'hr', '|',
+                    'alignment', 'html'];
+                var editor = new Simditor({
+                    toolbar: toolbar,
+                    upload: {
+                        url: '/upload'
+                    },
+                    allowedTags: ['br', 'span', 'a', 'img', 'b', 'strong', 'i', 'strike', 'u', 'font', 'p', 'ul', 'ol', 'li', 'blockquote', 'pre', 'code', 'h1', 'h2', 'h3', 'h4', 'hr', 'iframe'],
+                    allowedAttributes: {
+                        iframe: ['src', 'width', 'height', 'scrolling', 'frameborder', 'webkitallowfullscreen', 'mozallowfullscreen', 'allowfullscreen']
+                    },
+                    codeLanguages: [
+                        { name: 'Bash', value: 'bash' },
+                        { name: 'C++', value: 'c++' },
+                        { name: 'C#', value: 'cs' },
+                        { name: 'CSS', value: 'css' },
+                        { name: 'Erlang', value: 'erlang' },
+                        { name: 'Less', value: 'less' },
+                        { name: 'Sass', value: 'sass' },
+                        { name: 'Diff', value: 'diff' },
+                        { name: 'CoffeeScript', value: 'coffeescript' },
+                        { name: 'HTML,XML', value: 'html' },
+                        { name: 'JSON', value: 'json' },
+                        { name: 'Java', value: 'java' },
+                        { name: 'JavaScript', value: 'js' },
+                        { name: 'Markdown', value: 'markdown' },
+                        { name: 'Nginx', value: 'nginx' },
+                        { name: 'Objective C', value: 'oc' },
+                        { name: 'PHP', value: 'php' },
+                        { name: 'Perl', value: 'parl' },
+                        { name: 'Python', value: 'python' },
+                        { name: 'Ruby', value: 'ruby' },
+                        { name: 'SQL', value: 'sql'}
+                    ],
+                    textarea: $('#editor')
+                });
+            </script>
+        </div>
+        <div class="row">
+            <div class="input-field" style="margin-top:0;margin-bottom:1rem">
+                <span title="Others can view.">{{ render_field(form.public) }}</span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col s12">
+                <button type="submit" class="waves-effect waves-light btn">Save</button>
+            </div>
+        </div>
+    </form>
+
+</div>
+
+
+{% include 'inc/menu.html' %}
+
+{% endblock %}
+
